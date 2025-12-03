@@ -1,0 +1,33 @@
+<div class="box">
+<h2>Client Geo Info</h2>
+<button onclick="getClientGeo()">Get Client Info</button>
+<pre id="clientGeoResult"></pre>
+</div>
+<div class="box">
+<h2>API Check</h2>
+<input type="text" id="checkApiURL" placeholder="https://example.com/api">
+<select id="checkApiMethod"><option>GET</option><option>POST</option></select>
+<button onclick="checkApi()">Check API</button>
+<pre id="checkApiResult"></pre>
+</div>
+<script>
+async function getClientGeo(){
+const res=await fetch('/api/clientGeo');
+const data=await res.json();
+document.getElementById('clientGeoResult').textContent =
+`IP: ${data.ip}\nCountry: ${data.geo.country_name} (${data.geo.country_code})\nRegion: ${data.geo.region}\nCity: ${data.geo.city}\nISP: ${data.geo.org}\nTimezone: ${data.geo.timezone}`;
+}
+
+async function checkApi(){
+const url=document.getElementById('checkApiURL').value;
+const method=document.getElementById('checkApiMethod').value;
+const res=await fetch('/api/checkApi',{
+method:'POST', headers:{'Content-Type':'application/json'},
+body:JSON.stringify({url, method})
+});
+const data=await res.json();
+document.getElementById('checkApiResult').textContent = data.ok ?
+`✅ API 利用可能 (HTTP ${data.status} ${data.statusText})` :
+`❌ API 利用不可: ${data.error || data.statusText}`;
+}
+</script>
